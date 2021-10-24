@@ -1,0 +1,7 @@
+/target/
+/Server/target/
+/Client/target/
+/.idea/
+/InfiniteString.iml
+/Client/Client.iml
+/Server/Server.iml
