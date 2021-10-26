@@ -1,10 +1,12 @@
+package chat;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
 public class Props {
-    private String port;
+    private int port;
     private String host;
     public static String FILEPATH = "settings.xml";
     public static String PORT_TAG = "port";
@@ -27,14 +29,14 @@ public class Props {
         Properties loadProps = new Properties();
         try {
             loadProps.loadFromXML(new FileInputStream(FILEPATH));
-            port = loadProps.getProperty(PORT_TAG);
+            port = Integer.parseInt(loadProps.getProperty(PORT_TAG));
             host = loadProps.getProperty(HOST_TAG);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public String getPort() {
+    public int getPort() {
         return port;
     }
 

@@ -21,8 +21,8 @@
         </plugins>
     </build>
     <modules>
-        <module>Client</module>
-        <module>Server</module>
+        <module>chat.Client</module>
+        <module>chat.Server</module>
     </modules>
 
     <properties>
