@@ -1,5 +1,7 @@
 package chat.Client;
 
+import chat.Message;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
@@ -23,7 +25,7 @@ class ServerListener implements Runnable {
                 if (channel.read(buffer) > 0) {
                     buffer.flip();
                     String response = new String(buffer.array(), 0, buffer.limit());
-                    System.out.printf("Получено от сервера -> %s%n", response);
+                    new Message(response).toChat();
                 }
             }
             channel.close();

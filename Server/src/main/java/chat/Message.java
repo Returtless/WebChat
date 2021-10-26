@@ -1,7 +1,5 @@
 package chat;
 
-import chat.Commands;
-
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
@@ -29,7 +27,7 @@ public class Message {
             String[] splittedMsg = text.split(DELIMETER);
             this.type = Commands.getValue(splittedMsg[0]);
             this.login = splittedMsg[1];
-            if (splittedMsg.length == 3){
+            if (splittedMsg.length == 3) {
                 this.text = splittedMsg[2];
             }
         } catch (Exception e) {
@@ -42,8 +40,12 @@ public class Message {
         return type + DELIMETER + login + DELIMETER + text;
     }
 
-    public ByteBuffer toBuffer(){
+    public ByteBuffer toBuffer() {
         return ByteBuffer.wrap(toString().getBytes(StandardCharsets.UTF_8));
+    }
+
+    public void toChat() {
+        System.out.println(login.isBlank() ? text : login + ": " + text);
     }
 
     public Commands getType() {

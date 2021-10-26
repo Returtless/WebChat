@@ -41,7 +41,6 @@ public class ClientManager {
                 }
             }
             isConnected.set(true);
-            new Thread(new ServerListener(channel, isConnected)).start();
             System.out.println("Подключение прошло успешно!");
         } catch (IOException exc) {
             System.out.printf("Ошибка подключения к серверу %s, %s%n",
@@ -62,15 +61,21 @@ public class ClientManager {
                 System.out.println("Введите логин");
                 nickname = inputMessage.readLine();
                 sendMessage(new Message(Commands.LOGIN, nickname, ""));
-                if (channel.read(buffer) > 0) {
-                    buffer.flip();
-                    String response = new String(buffer.array(), 0, buffer.limit());
-                    buffer.clear();
-                    if (!new Message(response).getType().equals(Commands.ERROR)) {
-                        break;
-                    } else {
-                        isErrorLogged = true;
+                while (true) {
+                    if (channel.read(buffer) > 0) {
+                        buffer.flip();
+                        String response = new String(buffer.array(), 0, buffer.limit());
+                        buffer.clear();
+                        if (!new Message(response).getType().equals(Commands.ERROR)) {
+                            break;
+                        } else {
+                            isErrorLogged = true;
+                        }
                     }
+                }
+                if (!isErrorLogged){
+                    new Thread(new ServerListener(channel, isConnected)).start();
+                    break;
                 }
             }
         } catch (IOException exc) {
@@ -84,7 +89,7 @@ public class ClientManager {
         try {
             BufferedReader inputMessage = new BufferedReader((new InputStreamReader(System.in)));
             String msg = null;
-            System.out.println("Введите сообщение");
+            System.out.println("Вы вошли в чат");
             while (true) {
                 msg = inputMessage.readLine();
                 if (msg != null) {

@@ -12,8 +12,4 @@ public class Main {
         props.loadSettings();
         new ConnectionManager();
     }
-
-    public static void connectionManager(){
-
-    }
 }

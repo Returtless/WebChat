@@ -88,7 +88,7 @@ public class ConnectionManager extends Thread {
             Message message = processRequest(cc, new Message(request.toString()));
 
             assert message != null;
-            if (message.getType() != Commands.ERROR) {
+            if (message.getType() != Commands.ERROR || !(message.getType() == Commands.LOGIN && message.getLogin() == null)) {
                 sendMessages(message, cc);
             } else {
                 sendMessage(cc, message);
@@ -108,10 +108,8 @@ public class ConnectionManager extends Thread {
         for (Iterator<SocketChannel> i = clientChannels.iterator(); i.hasNext(); )
             try {
                 SocketChannel client = i.next();
-                if (!mySocketChannel.equals(client) && client.isConnected()) {
+                if ((!mySocketChannel.equals(client) || message.getLogin().isBlank()) && client.isConnected()) {
                     client.write(message.toBuffer());
-                } else {
-                    i.remove();
                 }
             } catch (IOException e) {
                 System.out.println("Ошибка при отправке: " + e.getMessage());
