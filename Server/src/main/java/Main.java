@@ -1,6 +1,3 @@
-package chat.Server;
-
-import chat.Props;
 
 import java.io.IOException;
 

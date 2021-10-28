@@ -1,6 +1,3 @@
-package chat.Client;
-
-import chat.Message;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -30,7 +27,7 @@ class ServerListener implements Runnable {
             }
             channel.close();
             channel.socket().close();
-            System.out.println("Сервер выключился!");
+            System.out.println("Вы отключились!");
         } catch (IOException e) {
             System.out.println("Ошибка: " + e.getMessage());
             isConnected.set(false);

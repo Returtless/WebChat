@@ -1,5 +1,3 @@
-package chat;
-
 public enum Commands {
     LOGIN("1"),
     SEND("2"),

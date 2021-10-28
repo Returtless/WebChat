@@ -1,8 +1,5 @@
-package chat.Server;
-
-import chat.Commands;
-import chat.Message;
-import chat.Props;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -18,6 +15,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 public class ConnectionManager extends Thread {
+    private static final Logger LOG = LogManager.getLogger(ConnectionManager.class);
 
     private final ConcurrentSkipListSet<String> listOfNames = new ConcurrentSkipListSet<>();
     private Set<SocketChannel> clientChannels;
@@ -25,6 +23,7 @@ public class ConnectionManager extends Thread {
     private Selector selector = null;
 
     public ConnectionManager() {
+        LOG.info("Инициализация сервера");
         clientChannels = new HashSet<>();
         try {
             clientChannels = new HashSet<>();
@@ -36,11 +35,11 @@ public class ConnectionManager extends Thread {
             selector = Selector.open();
             serverSocket.register(selector, SelectionKey.OP_ACCEPT);
         } catch (Exception exc) {
-            System.out.println("Сервер выключен");
+            LOG.error("Отключение сервера");
             exc.printStackTrace();
             System.exit(1);
         }
-        System.out.println("Сервер запущен");
+        LOG.info("Сервер запущен");
         start();
     }
 
@@ -95,7 +94,7 @@ public class ConnectionManager extends Thread {
             }
         } catch (Exception exc) {
             clientChannels.remove(cc);
-            System.out.println("Ошибка при чтении: " + exc.getMessage());
+            LOG.error("Ошибка при чтении: {}", exc.getMessage());
             try {
                 cc.close();
                 cc.socket().close();
@@ -104,7 +103,7 @@ public class ConnectionManager extends Thread {
         }
     }
 
-    private void sendMessages(Message message,  SocketChannel mySocketChannel) {
+    private void sendMessages(Message message, SocketChannel mySocketChannel) {
         for (Iterator<SocketChannel> i = clientChannels.iterator(); i.hasNext(); )
             try {
                 SocketChannel client = i.next();
@@ -112,7 +111,7 @@ public class ConnectionManager extends Thread {
                     client.write(message.toBuffer());
                 }
             } catch (IOException e) {
-                System.out.println("Ошибка при отправке: " + e.getMessage());
+                LOG.error("Ошибка при отправке: {}", e.getMessage());
                 i.remove();
             }
     }
@@ -124,26 +123,29 @@ public class ConnectionManager extends Thread {
     }
 
     private Message processRequest(SocketChannel cc, Message message) throws IOException {
+        final String login = message.getLogin();
         switch (message.getType()) {
             case LOGIN -> {
-                if (listOfNames.contains(message.getLogin())) {
+                if (listOfNames.contains(login)) {
                     return new Message(Commands.ERROR, "Данный логин уже занят!");
                 }
-                System.out.printf("Новый пользователь: %s подключен%n", message.getLogin());
-                return new Message(Commands.SEND, message.getLogin() + " вошел в чат");
+                listOfNames.add(login);
+                LOG.info("Новый пользователь: {} подключен", login);
+                return new Message(Commands.SEND, login + " вошел в чат");
             }
             case SEND -> {
-                System.out.printf("%s: %s%n", message.getLogin(), message.getText());
+                LOG.info("{}: {}", login, message.getText());
                 return message;
             }
             case LOGOUT -> {
                 clientChannels.remove(cc);
+                listOfNames.remove(login);
                 cc.close();
-                System.out.printf("%s вышел из чата%n", message.getLogin());
-                return new Message(Commands.SEND, message.getLogin() + " вышел из чата");
+                LOG.info("{} вышел из чата", login);
+                return new Message(Commands.SEND, login + " вышел из чата");
             }
             default -> {
-                System.out.printf("Неизвестная команда \"%s\"", message.getType());
+                LOG.warn("Неизвестная команда \"{}\"", message.getType());
                 return null;
             }
         }

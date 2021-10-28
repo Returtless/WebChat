@@ -1,0 +1,26 @@
+2021-10-28 20:17:45,837 INFO ConnectionManager [main] Инициализация сервера
+2021-10-28 20:17:45,980 INFO ConnectionManager [main] Сервер запущен
+2021-10-28 20:20:20,954 INFO [1] [ConnectionManager] Инициализация сервера
+2021-10-28 20:20:20,973 INFO [1] [ConnectionManager] Сервер запущен
+2021-10-28 20:21:20,392 INFO [18] [ConnectionManager] Новый пользователь: Владислав подключен
+
+2021-10-28 20:21:25,896 INFO [18] [ConnectionManager] Владислав: Всем привет
+
+2021-10-28 20:54:24,564 INFO [1] [ConnectionManager] Инициализация сервера
+2021-10-28 20:54:24,587 INFO [1] [ConnectionManager] Сервер запущен
+2021-10-28 20:54:34,517 INFO [16] [ConnectionManager] Новый пользователь: Владос подключен
+2021-10-28 20:54:51,130 INFO [16] [ConnectionManager] Новый пользователь: Санька подключен
+2021-10-28 20:54:57,401 INFO [16] [ConnectionManager] Владос: привет Санька
+
+2021-10-28 20:55:02,150 INFO [16] [ConnectionManager] Санька: привет Владос
+
+2021-10-28 20:55:06,635 INFO [16] [ConnectionManager] Санька: че как жизнь
+
+2021-10-28 20:55:18,120 INFO [16] [ConnectionManager] Владос: нормально, как сам
+
+2021-10-28 20:55:20,974 INFO [16] [ConnectionManager] Санька: норм
+
+2021-10-28 20:55:23,703 INFO [16] [ConnectionManager] Санька: я пошел, пока
+
+2021-10-28 20:55:28,308 INFO [16] [ConnectionManager] Санька вышел из чата
+2021-10-28 20:55:36,057 INFO [16] [ConnectionManager] Владос вышел из чата

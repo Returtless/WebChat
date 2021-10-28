@@ -1,9 +1,3 @@
-package chat.Client;
-
-import chat.Commands;
-import chat.Message;
-import chat.Props;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;

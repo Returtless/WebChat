@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="info" strict="true"
+               name="XMLConfigTest" packages="logs">
+
+    <Appenders>
+        <File name="logFile"
+              fileName="logs/server.log">
+            <PatternLayout>
+                <Pattern>%d %p [%tid] [%c{1.}] %m%n</Pattern>
+            </PatternLayout>
+        </File>
+    </Appenders>
+
+    <Loggers>
+        <Root level="INFO">
+            <AppenderRef ref="logFile"/>
+        </Root>
+    </Loggers>
+
+</Configuration>
