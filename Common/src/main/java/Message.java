@@ -1,3 +1,5 @@
+import org.apache.logging.log4j.Logger;
+
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
@@ -44,6 +46,10 @@ public class Message {
 
     public void toChat() {
         System.out.println(login.isBlank() ? text : login + ": " + text);
+    }
+
+    public void toLog(Logger log) {
+       log.info(login.isBlank() ? text : login + ": " + text);
     }
 
     public Commands getType() {

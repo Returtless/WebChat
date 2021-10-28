@@ -24,3 +24,22 @@
 
 2021-10-28 20:55:28,308 INFO [16] [ConnectionManager] Санька вышел из чата
 2021-10-28 20:55:36,057 INFO [16] [ConnectionManager] Владос вышел из чата
+2021-10-28 21:18:29,999 INFO [1] [ConnectionManager] Инициализация сервера
+2021-10-28 21:18:30,035 INFO [1] [ConnectionManager] Сервер запущен
+2021-10-28 21:18:45,280 INFO [18] [ConnectionManager] Новый пользователь: Иван подключен
+2021-10-28 21:18:49,970 INFO [18] [ConnectionManager] Иван: я тут один?
+2021-10-28 21:18:52,709 INFO [18] [ConnectionManager] Иван: походу да
+2021-10-28 21:18:54,695 INFO [18] [ConnectionManager] Иван: пока
+2021-10-28 21:18:56,698 INFO [18] [ConnectionManager] Иван вышел из чата
+2021-10-28 21:23:29,232 INFO [18] [ConnectionManager] Новый пользователь: Толян подключен
+2021-10-28 21:23:32,295 INFO [18] [ConnectionManager] Толян: привет всем
+2021-10-28 21:23:33,508 INFO [18] [ConnectionManager] Толян: алло
+2021-10-28 21:23:34,473 INFO [18] [ConnectionManager] Толян: пока
+2021-10-28 21:23:35,982 INFO [18] [ConnectionManager] Толян вышел из чата
+2021-10-28 21:24:34,063 INFO [18] [ConnectionManager] Новый пользователь: кот подключен
+2021-10-28 21:24:36,914 INFO [18] [ConnectionManager] Новый пользователь: собак подключен
+2021-10-28 21:24:39,956 INFO [18] [ConnectionManager] собак: привет
+2021-10-28 21:24:45,335 INFO [18] [ConnectionManager] кот: пока
+2021-10-28 21:24:49,009 INFO [18] [ConnectionManager] кот: /exi
+2021-10-28 21:24:51,052 INFO [18] [ConnectionManager] кот вышел из чата
+2021-10-28 21:24:54,308 INFO [18] [ConnectionManager] собак вышел из чата

@@ -1,7 +1,8 @@
 /target/
-/chat.Server/target/
-/chat.Client/target/
+/Server/target/
+/Client/target/
+/Common/target/
 /.idea/
 /InfiniteString.iml
-/chat.Client/chat.Client.iml
-/chat.Server/chat.Server.iml
+/Client/Client.iml
+/Server/Server.iml
