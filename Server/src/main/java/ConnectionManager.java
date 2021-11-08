@@ -22,22 +22,20 @@ public class ConnectionManager extends Thread {
     private ServerSocketChannel serverSocket = null;
     private Selector selector = null;
 
+    public static int EXIT_STATUS = 1;
+
     public ConnectionManager() {
         LOG.info("Инициализация сервера");
-        clientChannels = new HashSet<>();
         try {
             clientChannels = new HashSet<>();
             serverSocket = ServerSocketChannel.open();
             serverSocket.configureBlocking(false);
-            Props properties = new Props();
-            properties.loadSettings();
-            serverSocket.socket().bind(new InetSocketAddress(properties.getHost(), properties.getPort()));
+            serverSocket.socket().bind(new InetSocketAddress(Props.getHost(), Props.getPort()));
             selector = Selector.open();
             serverSocket.register(selector, SelectionKey.OP_ACCEPT);
-        } catch (Exception exc) {
-            LOG.error("Отключение сервера");
-            exc.printStackTrace();
-            System.exit(1);
+        } catch (Exception e) {
+            LOG.error("Отключение сервера : {}", e.getMessage());
+            System.exit(EXIT_STATUS);
         }
         LOG.info("Сервер запущен");
         start();
@@ -69,36 +67,38 @@ public class ConnectionManager extends Thread {
     }
 
     private void read(SelectionKey key) {
-        SocketChannel cc = (SocketChannel) key.channel();
-        if (!cc.isOpen()) {
+        SocketChannel socketChannel = (SocketChannel) key.channel();
+        if (!socketChannel.isOpen()) {
             return;
         }
         StringBuilder request = new StringBuilder();
         try {
-            ByteBuffer buffer = ByteBuffer.allocate(1024);
+            ByteBuffer buffer = ByteBuffer.allocate(Props.getBufferSize());
             buffer.clear();
-            while (cc.read(buffer) > 0) {
+            while (socketChannel.read(buffer) > 0) {
                 buffer.flip();
                 request.append(new String(buffer.array(), buffer.position(),
                         buffer.limit(), StandardCharsets.UTF_8));
                 buffer.clear();
             }
 
-            Message message = processRequest(cc, new Message(request.toString()));
+            Message message = processRequest(socketChannel, new Message(request.toString()));
 
             assert message != null;
-            if (message.getType() != Commands.ERROR || !(message.getType() == Commands.LOGIN && message.getLogin() == null)) {
-                sendMessages(message, cc);
+
+            if (message.getType() == Commands.ERROR || (message.getType() == Commands.LOGIN && message.getLogin() == null)) {
+                sendMessage(socketChannel, message);
             } else {
-                sendMessage(cc, message);
+                sendMessages(message, socketChannel);
             }
         } catch (Exception exc) {
-            clientChannels.remove(cc);
+            clientChannels.remove(socketChannel);
             LOG.error("Ошибка при чтении: {}", exc.getMessage());
             try {
-                cc.close();
-                cc.socket().close();
+                socketChannel.close();
+                socketChannel.socket().close();
             } catch (Exception e) {
+                LOG.error("Ошибка закрытия сокета: {}", e.getMessage());
             }
         }
     }
@@ -122,7 +122,7 @@ public class ConnectionManager extends Thread {
         }
     }
 
-    private Message processRequest(SocketChannel cc, Message message) throws IOException {
+    private Message processRequest(SocketChannel socketChannel, Message message) throws IOException {
         final String login = message.getLogin();
         switch (message.getType()) {
             case LOGIN -> {
@@ -138,9 +138,9 @@ public class ConnectionManager extends Thread {
                 return message;
             }
             case LOGOUT -> {
-                clientChannels.remove(cc);
+                clientChannels.remove(socketChannel);
                 listOfNames.remove(login);
-                cc.close();
+                socketChannel.close();
                 LOG.info("{} вышел из чата", login);
                 return new Message(Commands.SEND, login + " вышел из чата");
             }

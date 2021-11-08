@@ -3,4 +3,5 @@
 <properties>
 <entry key="port">8080</entry>
 <entry key="host">localhost</entry>
+<entry key="bufferSize">1024</entry>
 </properties>

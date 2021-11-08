@@ -1,44 +1,38 @@
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
 public class Props {
-    private int port;
-    private String host;
+    private static int port;
+    private static String host;
+    private static int bufferSize;
     public static String FILEPATH = "settings.xml";
     public static String PORT_TAG = "port";
     public static String HOST_TAG = "host";
+    public static String BUFFERS_TAG = "bufferSize";
 
 
-    public void saveSettings() {
-        Properties saveProps = new Properties();
-        saveProps.setProperty(PORT_TAG, Integer.toString(8080));
-        saveProps.setProperty(HOST_TAG, "localhost");
+    static {
+        Properties settings = new Properties();
         try {
-            saveProps.storeToXML(new FileOutputStream(FILEPATH), "");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    public void loadSettings() {
-        Properties loadProps = new Properties();
-        try {
-            loadProps.loadFromXML(new FileInputStream(FILEPATH));
-            port = Integer.parseInt(loadProps.getProperty(PORT_TAG));
-            host = loadProps.getProperty(HOST_TAG);
+            settings.loadFromXML(new FileInputStream(FILEPATH));
+            port = Integer.parseInt(settings.getProperty(PORT_TAG));
+            host = settings.getProperty(HOST_TAG);
+            bufferSize = Integer.parseInt(settings.getProperty(BUFFERS_TAG));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public int getPort() {
+    public static int getPort() {
         return port;
     }
 
-    public String getHost() {
+    public static String getHost() {
         return host;
+    }
+
+    public static int getBufferSize() {
+        return bufferSize;
     }
 }

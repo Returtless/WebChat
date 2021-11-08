@@ -11,14 +11,23 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ClientManager {
     private final Logger LOG = LogManager.getLogger(ClientManager.class);
-    private final Props properties = new Props();
     private SocketChannel channel;
     private final AtomicBoolean isConnected = new AtomicBoolean(false);
     private String nickname;
 
+    public static String EXIT = "/exit";
+    public static int TIMEOUT = 200;
+    public static int EXIT_STATUS = 1;
+
+    public void start() {
+        this.connect();
+        this.login();
+        this.read();
+    }
 
     public void connect() {
-        properties.loadSettings();
+        String host = Props.getHost();
+        int port = Props.getPort();
         try {
             if (isConnected.get()) {
                 return;
@@ -28,12 +37,12 @@ public class ClientManager {
             if (!channel.isOpen()) {
                 channel = SocketChannel.open();
             }
-            channel.connect(new InetSocketAddress(properties.getHost(), properties.getPort()));
-            System.out.printf("Подключение к серверу %s:%d%n", properties.getHost(), properties.getPort());
-            LOG.info("Подключение к серверу {}:{}", properties.getHost(), properties.getPort());
+            channel.connect(new InetSocketAddress(host, port));
+            System.out.printf("Подключение к серверу %s:%d%n", host, port);
+            LOG.info("Подключение к серверу {}:{}", host, port);
             while (!channel.finishConnect()) {
                 try {
-                    Thread.sleep(200);
+                    Thread.sleep(TIMEOUT);
                 } catch (Exception exc) {
                     return;
                 }
@@ -43,15 +52,15 @@ public class ClientManager {
             LOG.info("Подключение к серверу прошло успешно");
         } catch (IOException exc) {
             LOG.error("Ошибка подключения к серверу {}, {}",
-                    properties.getHost(), exc.getLocalizedMessage());
-            System.exit(1);
+                    host, exc.getLocalizedMessage());
+            System.exit(EXIT_STATUS);
         }
     }
 
     public void login() {
         try {
             BufferedReader inputMessage = new BufferedReader((new InputStreamReader(System.in)));
-            ByteBuffer buffer = ByteBuffer.allocate(1024);
+            ByteBuffer buffer = ByteBuffer.allocate(Props.getBufferSize());
             boolean isErrorLogged = false;
             while (true) {
                 if (isErrorLogged) {
@@ -67,37 +76,34 @@ public class ClientManager {
                         buffer.flip();
                         String response = new String(buffer.array(), 0, buffer.limit());
                         buffer.clear();
-                        if (!new Message(response).getType().equals(Commands.ERROR)) {
-                            break;
-                        } else {
-                            isErrorLogged = true;
-                        }
+                        isErrorLogged = new Message(response).getType().equals(Commands.ERROR);
+                        break;
                     }
                 }
                 if (!isErrorLogged) {
                     new Thread(new ServerListener(channel, isConnected)).start();
+                    LOG.info("Подключение к серверу с логином {} прошло успешно", nickname);
+                    System.out.println("Вы вошли в чат");
                     break;
                 }
             }
         } catch (IOException exc) {
             System.out.printf("Ошибка авторизации при подключении к серверу %s, %s%n",
-                    properties.getHost(), exc.getLocalizedMessage());
+                    Props.getHost(), exc.getLocalizedMessage());
             LOG.error("Ошибка авторизации при подключении к серверу {}, {}",
-                    properties.getHost(), exc.getLocalizedMessage());
-            System.exit(1);
+                    Props.getHost(), exc.getLocalizedMessage());
+            System.exit(EXIT_STATUS);
         }
     }
 
     public void read() {
         try {
             BufferedReader inputMessage = new BufferedReader((new InputStreamReader(System.in)));
-            String msg = null;
-            LOG.info("Подключение к серверу с логином {} прошло успешно", nickname);
-            System.out.println("Вы вошли в чат");
+            String msg;
             while (true) {
                 msg = inputMessage.readLine();
                 if (msg != null) {
-                    if ("/exit".equals(msg)) {
+                    if (EXIT.equals(msg)) {
                         disconnect();
                         break;
                     }
@@ -111,7 +117,7 @@ public class ClientManager {
                     exc.getLocalizedMessage());
             LOG.error("Ошибка в работе клиента: {}",
                     exc.getLocalizedMessage());
-            System.exit(1);
+            System.exit(EXIT_STATUS);
         }
     }
 
@@ -123,9 +129,9 @@ public class ClientManager {
             sendMessage(new Message(Commands.LOGOUT, nickname, ""));
             isConnected.set(false);
         } catch (Exception exc) {
-            LOG.error("Ошибка отключения от сервера {}", properties.getHost());
-            System.out.printf("Ошибка отключения %s%n", properties.getHost());
-            System.exit(3);
+            LOG.error("Ошибка отключения от сервера {}", Props.getHost());
+            System.out.printf("Ошибка отключения %s%n", Props.getHost());
+            System.exit(EXIT_STATUS);
         }
     }
 
@@ -134,7 +140,5 @@ public class ClientManager {
             channel.write(message.toBuffer());
         }
     }
-
-
 }
 

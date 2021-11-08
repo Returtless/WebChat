@@ -31,7 +31,7 @@ public class Message {
                 this.text = splittedMsg[2];
             }
         } catch (Exception e) {
-            System.out.println("Ошибка разбора пришедшего сообщения");
+            System.out.println("Ошибка разбора пришедшего сообщения " + text);
         }
     }
 

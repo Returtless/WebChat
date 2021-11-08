@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 class ServerListener implements Runnable {
     private final Logger LOG = LogManager.getLogger(ServerListener.class);
-    SocketChannel channel;
+    private final SocketChannel channel;
     private final AtomicBoolean isConnected;
 
     public ServerListener(SocketChannel channel, AtomicBoolean isConnected) {
@@ -19,7 +19,7 @@ class ServerListener implements Runnable {
 
     public void run() {
         try {
-            ByteBuffer buffer = ByteBuffer.allocate(1024);
+            ByteBuffer buffer = ByteBuffer.allocate(Props.getBufferSize());
             while (isConnected.get()) {
                 buffer.clear();
                 if (channel.read(buffer) > 0) {
